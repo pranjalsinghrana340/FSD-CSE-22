@@ -1,68 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demo fetch</title>
-  <style>
-    table {
-      width: 80vw;
-      border-collapse: collapse;
-      margin: auto;
-    }
-    th, td {
-      border: 2px solid red;
-      text-align: center;
-    }
-  </style>
-  <script>
-    const url = 'https://dummyjson.com/products?limit=50&skip=6';
-    async function loadproducts() {   // async function outer function hota hai jb hum await use karte hai
-      try {
-        const res = await fetch(url);
-        console.log("res=", res);
-        const data = await res.json();
-        console.log("data=", data.products);
-        let row = "";
-        data.products.forEach((i, index) => {
-          row += `<tr>
-                    <td>${index + 1}</td>
-                    <td>${i.title}</td>
-                    <td><img src="${i.images[0]}" width="50" height="50"></td>
-                    <td>${i.price}</td>
-                    <td>${i.rating}</td>
-                    <td>${i.stock}</td>
-                    <td>${i.brand}</td>
-                    <td>${i.category}</td>
-                  </tr>`;
-        });
-        const el = document.getElementById('data');
-        el.innerHTML = row;
-      } catch (err) {
-        console.log("err=", err);
-      }
-    }
-    loadproducts();
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Products</title>
+
+    <script>
+        const URL = "https://dummyjson.com/products?limit=50";
+
+        async function loadProduct() {
+            try {
+                const res = await fetch(URL);
+                console.log("res", res);
+                const data = await res.json();
+                const currencyRes = await fetch("https://open.er-api.com/v6/latest/USD");
+                const currencyData = await currencyRes.json();
+                const dollarToInr = currencyData.rates.INR;
+                console.log("data", data.products);
+                console.log("1 USD =", dollarToInr, "INR");
+                let rows = "";
+                data.products.map((i, index) => {
+                    const priceInINR = i.price * dollarToInr;
+                    rows += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${i.title}</td>
+                            <td><img src="${i.thumbnail}" width="50" height="50">
+                            <td>${i.category}</td>
+                            <td>${i.rating}</td>
+                            <td>₹${priceInINR.toFixed(2)}</td>
+                            <td>${i.stock}</td>
+                            <td><button onclick="addToCart(${i.id})">Add to Cart</button></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("productRows").innerHTML = rows;
+            }
+
+            catch (err) {
+                console.log("Error", err);
+            }
+        }
+        function addToCart(id) {
+      console.log("Product added to cart:", id);
+        }
+        loadProduct();
+    </script>
+
+    <style>
+        table {
+            width: 80vw;
+            border-collapse: collapse;
+            margin: auto;
+        }
+        td,th{
+            border: 2px solid red;
+            padding: 10px;
+        }
+        th{
+            background-color: lightgray;
+        }
+    </style>
 </head>
 <body>
-  <h1><center>List of Products</center></h1>
-  <table>
-    <thead>
-      <tr>
-        <th>sr.no</th>
-        <th>Title</th>
-        <th>Image</th>
-        <th>Price($)</th>
-        <th>Rating</th>
-        <th>Stock</th>
-        <th>Brand</th>
-        <th>Category</th>
-      </tr>
-    </thead>
-    <tbody id="data">
-      
-    </tbody>
-  </table>
+    <h1>
+        <center>List of Products</center>
+    </h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Sr.no</th>
+                <th>Title</th>
+                <th>Images</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Price($)</th>
+                <th>Stock</th>
+                <th>Cart</th>
+            </tr>
+        </thead>
+        <tbody id="productRows">
+        </tbody>
+    </table>
 </body>
 </html>

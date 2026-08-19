@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BookStore</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        #bookstore {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 100px;
+        }
+        .book{
+            border: 2px solid black;
+            width: 200px;
+            height: 350px;
+            text-align: center;
+            background-color: salmon;
+            border-radius: 5%;
+            padding: 10px;
+        }
+
+        .book img {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>BookStore</h1>
+    <div id="bookstore"></div>
+</body>
+ <script src="./bookstore.js"></script>
+</html>
